@@ -1,0 +1,9 @@
+{
+  "survey_id": "fixture-null-ai-001",
+  "exported_at": "2026-09-04T13:25:02Z",
+  "meta": { "fixture": "true" },
+  "answers": { "Q7": { "question": "Question with null AI?", "answer": "Answer." } },
+  "ai_outcomes": null,
+  "followups": {},
+  "voice_files": []
+}

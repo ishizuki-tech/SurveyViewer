@@ -1,0 +1,14 @@
+{
+  "survey_id": "fixture-production-001",
+  "build": "example-build-sha",
+  "exported_at": "2026-10-07T14:07:32Z",
+  "meta": {},
+  "answers": {
+    "Q1": { "question": "Fixture question one?", "answer": "Fixture answer one." },
+    "Q10": { "question": "Fixture question ten?", "answer": "Fixture answer ten.", "audio": [{ "file": "fixture-q10.wav" }] }
+  },
+  "ai_outcomes": { "Q10": "accepted" },
+  "followups": { "Q10": [{ "question": "Fixture follow-up?", "answer": "Fixture follow-up answer." }] },
+  "voice_files": [{ "file": "fixture-q10.wav", "survey_id": "fixture-production-001", "question_id": "Q10", "question": "Fixture question ten?", "answer": "Fixture answer ten." }],
+  "future_extension": { "retained": true }
+}

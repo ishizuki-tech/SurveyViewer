@@ -1,0 +1,13 @@
+{
+  "survey_id": "fixture-development-001",
+  "build": "dev-build-example",
+  "exported_at": "2026-10-02T23:59:46Z",
+  "meta": {},
+  "answers": {
+    "Start": { "question": "Start", "answer": "" },
+    "Q16": { "question": "Development fixture question?", "answer": "Development fixture answer." }
+  },
+  "ai_outcomes": {},
+  "followups": {},
+  "voice_files": []
+}

@@ -1,0 +1,10 @@
+{
+  "survey_id": "fixture-legacy-001",
+  "exported_at": "2026-09-03T12:19:28Z",
+  "meta": {},
+  "answers": {
+    "Q2": { "question": "Legacy fixture question?", "answer": "Legacy fixture answer." }
+  },
+  "followups": {},
+  "voice_files": []
+}
