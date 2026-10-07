@@ -13,6 +13,10 @@ label { display: grid; font-size: .85rem; font-weight: 650; gap: .3rem; }
 input, select { border: 1px solid #8c959f; border-radius: .35rem; font: inherit; padding: .48rem; width: 100%; }
 input:disabled { background: #f3f4f6; color: #667085; }
 .state-panel, .survey-detail, .raw-inspector, .session-list { background: white; border: 1px solid #d0d7de; border-radius: .5rem; margin-bottom: 1rem; padding: 1rem; }
+.session-list ul { list-style: none; margin: 0; padding: 0; }
+.session-list li + li { margin-top: .5rem; }
+.session-row { background: #fff; border: 1px solid #d0d7de; border-radius: .35rem; cursor: pointer; font: inherit; padding: .55rem; text-align: left; width: 100%; }
+.session-row:hover, .session-row:focus-visible { background: #eaf3fb; border-color: #0969da; }
 .state-panel--info { border-left: .3rem solid #4f86c6; }
 .state-panel--error { border-left: .3rem solid #cf222e; }
 .unavailable { color: #667085; font-style: italic; }

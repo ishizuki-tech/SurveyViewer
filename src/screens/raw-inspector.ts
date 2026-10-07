@@ -1,16 +1,14 @@
-import type { SurveySource } from "../config/sources";
-import { githubBlobUrl } from "../data/github-links";
 import type { NormalizedSession } from "../domain/normalized-session";
 
-export function rawInspector(session: NormalizedSession | undefined, source: SurveySource, exportPath?: string): HTMLElement {
+export function rawInspector(session: NormalizedSession | undefined, githubUrl?: string): HTMLElement {
   const section = document.createElement("section");
   section.className = "raw-inspector";
   const heading = document.createElement("h2");
   heading.textContent = "Raw JSON";
   section.append(heading);
-  if (exportPath !== undefined) {
+  if (githubUrl !== undefined) {
     const link = document.createElement("a");
-    link.href = githubBlobUrl(source, exportPath);
+    link.href = githubUrl;
     link.target = "_blank";
     link.rel = "noreferrer";
     link.textContent = "Open corresponding GitHub file";

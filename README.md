@@ -6,7 +6,9 @@ SurveyViewer is a lightweight, read-only static browser application for inspecti
 
 The Vite + vanilla TypeScript application has a schema normalization layer between raw exports and the UI. Raw JSON remains retained for inspection; the normalizer never invents a session ID, formal completion state, device identity, or missing answer/AI data.
 
-The Production source is `ishizuki-tech/SurveyExports`; Development is `ishizuki-tech/SurveyExports-Dev`. Phase 1 provides the source switch and an index-loading contract, but does not fetch live data because generated indexes have not been introduced yet.
+The Production source is `ishizuki-tech/SurveyExports`; Development is `ishizuki-tech/SurveyExports-Dev`. The browser loads each source's public `viewer-index/v1/manifest.json`, then only its required monthly JSON shards. Selecting a session fetches exactly that export JSON. Normal browser use never walks a GitHub repository tree or uses a GitHub API token.
+
+Each shard deliberately contains metadata only: paths and links, uploader date, export timestamp, survey ID, safely parsed device tag, build, counts, and availability flags. It does not contain answers, transcripts, follow-up text, AI text, or audio content. HTTP caching is left to the browser; Phase 2 adds no local persistence.
 
 ## Development
 
@@ -24,7 +26,7 @@ GitHub Pages builds with the `/SurveyViewer/` Vite base path.
 
 The viewer is designed for public, anonymous reads of generated static indexes and individual raw export files. It contains no GitHub token and must never embed one in browser code. No real survey answers, transcripts, device identifiers, or audio are included in source or test fixtures.
 
-Global answer/transcript search is intentionally deferred: building an index containing that text would increase its discoverability, even if the source repository is public.
+Global answer/transcript search is intentionally deferred: building an index containing that text would increase its discoverability, even if the source repository is public. Current filters cover source, month, UUID, device tag, and newest/oldest ordering.
 
 ## Current schema limitations
 

@@ -1,0 +1,9 @@
+{
+  "version": 1,
+  "generated_at": "2026-10-07T20:00:00Z",
+  "source": "production",
+  "repository": "ishizuki-tech/SurveyExports",
+  "commit_sha": "fixturecommit",
+  "malformed_export_count": 0,
+  "months": [{ "month": "2026-10", "file": "2026-10.json", "count": 2 }]
+}

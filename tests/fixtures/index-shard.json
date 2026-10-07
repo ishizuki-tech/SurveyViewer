@@ -1,0 +1,29 @@
+[
+  {
+    "source": "production",
+    "path": "2026-10-07/exports/2026-10-07_12-00-00_survey_Fixture_ABCDEF123456_11111111-1111-1111-1111-111111111111.json",
+    "github_blob_url": "https://example.test/blob/one",
+    "raw_json_url": "https://example.test/raw/one",
+    "uploader_date": "2026-10-07",
+    "exported_at": "2026-10-07T12:00:00Z",
+    "survey_id": "fixture-uuid-one",
+    "device_tag": "Fixture_ABCDEF123456",
+    "build": "fixture-build",
+    "question_count": 2,
+    "followup_count": 1,
+    "audio_reference_count": 1,
+    "availability": { "build": true, "ai_outcomes": true, "followups": true, "audio_references": true }
+  },
+  {
+    "source": "production",
+    "path": "2026-10-06/exports/survey_22222222-2222-2222-2222-222222222222_2026-10-06_10-00-00.json",
+    "github_blob_url": "https://example.test/blob/two",
+    "raw_json_url": "https://example.test/raw/two",
+    "uploader_date": "2026-10-06",
+    "survey_id": "fixture-uuid-two",
+    "question_count": 1,
+    "followup_count": 0,
+    "audio_reference_count": 0,
+    "availability": { "build": false, "ai_outcomes": false, "followups": false, "audio_references": false }
+  }
+]

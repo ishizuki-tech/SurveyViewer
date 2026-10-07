@@ -1,5 +1,5 @@
 import type { SurveySource } from "../config/sources";
-import { githubBlobUrl } from "../data/github-links";
+import { githubRawUrl } from "../data/github-links";
 import type { AudioReference, VoiceFileRecord } from "../domain/normalized-session";
 import { unavailable } from "./state-panel";
 
@@ -31,10 +31,10 @@ export function audioLinks(
   for (const file of [...new Set(files)]) {
     const item = document.createElement("li");
     const link = document.createElement("a");
-    link.href = githubBlobUrl(source, `${dateDirectory}/voice/${file}`);
+    link.href = githubRawUrl(source, `${dateDirectory}/voice/${file}`);
     link.target = "_blank";
     link.rel = "noreferrer";
-    link.textContent = file;
+    link.textContent = `Referenced audio: ${file}`;
     item.append(link);
     list.append(item);
   }

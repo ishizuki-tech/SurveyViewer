@@ -4,6 +4,8 @@ export interface FilterControls {
   readonly element: HTMLElement;
   readonly source: HTMLSelectElement;
   readonly uuid: HTMLInputElement;
+  readonly month: HTMLSelectElement;
+  readonly device: HTMLInputElement;
   readonly sort: HTMLSelectElement;
 }
 
@@ -14,13 +16,11 @@ export function filters(selectedSource: SourceId, onSourceChange: (source: Sourc
   const source = select("Source", [["production", "Production"], ["development", "Development"]], selectedSource);
   source.addEventListener("change", () => onSourceChange(source.value as SourceId));
   const uuid = input("UUID search", "Search UUID", "search");
-  const date = input("Date", "Index required in Phase 2", "text");
-  date.disabled = true;
-  const device = input("Device", "Index required in Phase 2", "text");
-  device.disabled = true;
+  const month = select("Month", [["all", "All months"]], "all");
+  const device = input("Device", "Filter device tag", "search");
   const sort = select("Sort", [["newest", "Newest first"], ["oldest", "Oldest first"]], "newest");
-  form.append(source.parentElement!, uuid.parentElement!, date.parentElement!, device.parentElement!, sort.parentElement!);
-  return { element: form, source, uuid, sort };
+  form.append(source.parentElement!, uuid.parentElement!, month.parentElement!, device.parentElement!, sort.parentElement!);
+  return { element: form, source, uuid, month, device, sort };
 }
 
 function input(labelText: string, placeholder: string, type: string): HTMLInputElement {
