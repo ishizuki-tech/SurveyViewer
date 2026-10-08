@@ -1,19 +1,23 @@
 export interface ReviewFilters {
-  uuid: string;
+  surveyPath: string;
   device: string;
   month: string;
   sort: string;
 }
 
 export const DEFAULT_REVIEW_FILTERS: ReviewFilters = {
-  uuid: "",
-  device: "",
+  surveyPath: "all",
+  device: "all",
   month: "all",
   sort: "newest",
 };
 
 export function hasActiveFilters(filters: ReviewFilters): boolean {
-  return filters.uuid !== "" || filters.device !== "" || filters.month !== "all" || filters.sort !== "newest";
+  return filters.surveyPath !== "all" || filters.device !== "all" || filters.month !== "all" || filters.sort !== "newest";
+}
+
+export function clearReviewFilters(filters: ReviewFilters): void {
+  Object.assign(filters, DEFAULT_REVIEW_FILTERS);
 }
 
 export function shortenIdentifier(value: string, prefixLength = 8, suffixLength = 4): string {

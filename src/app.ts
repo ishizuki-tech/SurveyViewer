@@ -1,11 +1,12 @@
 import "./style.css";
 import { filters } from "./components/filters";
-import { DEFAULT_REVIEW_FILTERS, type ReviewFilters } from "./components/review-utils";
+import { clearReviewFilters, DEFAULT_REVIEW_FILTERS, type ReviewFilters } from "./components/review-utils";
 import { statePanel } from "./components/state-panel";
 import { SOURCES, type SourceId } from "./config/sources";
 import { IndexLoadError, loadExport, loadIndex } from "./data/index-loader";
 import { normalizeExport } from "./data/normalize-export";
 import { filterAndSortSessions } from "./data/session-query";
+import { deviceOptions, surveyOptions } from "./data/filter-options";
 import type { NormalizedSession } from "./domain/normalized-session";
 import type { ViewerIndexEntry, ViewerIndexManifest } from "./domain/viewer-index";
 import { rawInspector } from "./screens/raw-inspector";
@@ -92,13 +93,13 @@ function render(): void {
   const layout = document.createElement("main");
   layout.className = "layout";
   const sidebar = document.createElement("aside");
-  const controls = filters(selectedSource, filtersState, (source) => {
+  const controls = filters(selectedSource, filtersState, deviceOptions(entries), surveyOptions(entriesForSurveyOptions()), (source) => {
     selectedSource = source;
-    filtersState.month = "all";
+    clearReviewFilters(filtersState);
     narrowDetailMode = false;
     void refreshIndex();
   }, () => {
-    Object.assign(filtersState, DEFAULT_REVIEW_FILTERS);
+    clearReviewFilters(filtersState);
     selectedEntry = undefined;
     selectedSession = undefined;
     detailError = undefined;
@@ -106,10 +107,30 @@ function render(): void {
     void refreshIndex();
   });
   populateMonths(controls.month);
-  controls.uuid.addEventListener("input", () => { filtersState.uuid = controls.uuid.value; render(); });
-  controls.device.addEventListener("input", () => { filtersState.device = controls.device.value; render(); });
+  controls.device.addEventListener("change", () => {
+    filtersState.device = controls.device.value;
+    filtersState.surveyPath = "all";
+    clearSelectedSession();
+    render();
+  });
+  controls.survey.addEventListener("change", () => {
+    filtersState.surveyPath = controls.survey.value;
+    const entry = entries.find((candidate) => candidate.path === filtersState.surveyPath);
+    if (entry === undefined) {
+      clearSelectedSession();
+      render();
+    } else {
+      void selectSession(entry);
+    }
+  });
   controls.sort.addEventListener("change", () => { filtersState.sort = controls.sort.value; render(); });
-  controls.month.addEventListener("change", () => { filtersState.month = controls.month.value; void refreshIndex(); });
+  controls.month.addEventListener("change", () => {
+    filtersState.month = controls.month.value;
+    filtersState.device = "all";
+    filtersState.surveyPath = "all";
+    clearSelectedSession();
+    void refreshIndex();
+  });
   sidebar.append(controls.element, sessionList(filteredEntries(), selectedEntry?.path, (entry) => { void selectSession(entry); }, emptyListMessage()));
   const detail = document.createElement("section");
   detail.className = "detail-column";
@@ -169,7 +190,18 @@ function populateMonths(select: HTMLSelectElement): void {
 }
 
 function filteredEntries(): readonly ViewerIndexEntry[] {
-  return filterAndSortSessions(entries, { uuid: filtersState.uuid, device: filtersState.device, sort: filtersState.sort === "oldest" ? "oldest" : "newest" });
+  return filterAndSortSessions(entries, { surveyPath: filtersState.surveyPath, device: filtersState.device, sort: filtersState.sort === "oldest" ? "oldest" : "newest" });
+}
+
+function entriesForSurveyOptions(): readonly ViewerIndexEntry[] {
+  return filterAndSortSessions(entries, { surveyPath: "all", device: filtersState.device, sort: filtersState.sort === "oldest" ? "oldest" : "newest" });
+}
+
+function clearSelectedSession(): void {
+  selectedEntry = undefined;
+  selectedSession = undefined;
+  detailError = undefined;
+  rawExpanded = false;
 }
 
 function indexStatus(): string {
@@ -182,7 +214,7 @@ function indexStatus(): string {
 function emptyListMessage(): string {
   if (loadingIndex) return "Loading session metadata…";
   if (indexError !== undefined) return "The index could not be loaded; adjust the source or retry.";
-  if (entries.length > 0) return "No sessions match the active UUID or device filters.";
+  if (entries.length > 0) return "No sessions match the active filters.";
   return "The selected repository currently has no indexed exports.";
 }
 

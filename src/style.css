@@ -51,6 +51,11 @@ input:disabled { background: #f3f4f6; color: #667085; }
 .followups { border-left: 3px solid #9ec5e8; margin: 1rem 0; padding-left: .8rem; }
 .followup { border-top: 1px solid #d8dee4; margin: .6rem 0; padding-left: .7rem; }
 .audio-links ul { margin: .4rem 0; padding-left: 1.2rem; }
+.audio-links li { display: grid; gap: .35rem; margin: .8rem 0; }
+.audio-links audio { max-width: 100%; }
+.audio-status { color: #57606a; font-size: .85rem; margin: 0; }
+.audio-status--available { color: #1a7f37; }
+.audio-status--unavailable { color: #8250df; }
 .raw-inspector summary { cursor: pointer; font-size: 1.1rem; font-weight: 700; }
 .raw-inspector pre { background: #0d1117; color: #c9d1d9; max-height: 28rem; overflow: auto; padding: 1rem; white-space: pre-wrap; }
 a { color: #0969da; }

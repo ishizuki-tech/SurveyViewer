@@ -26,7 +26,7 @@ GitHub Pages builds with the `/SurveyViewer/` Vite base path.
 
 The viewer is designed for public, anonymous reads of generated static indexes and individual raw export files. It contains no GitHub token and must never embed one in browser code. No real survey answers, transcripts, device identifiers, or audio are included in source or test fixtures.
 
-Global answer/transcript search is intentionally deferred: building an index containing that text would increase its discoverability, even if the source repository is public. Current filters cover source, month, UUID, device tag, and newest/oldest ordering.
+Global answer/transcript search is intentionally deferred: building an index containing that text would increase its discoverability, even if the source repository is public. Current filters cover source, month, device tag, survey selection, and newest/oldest ordering. The selector and session list use shortened UUIDs while detail and copy actions retain the full underlying UUID.
 
 ## Current schema limitations
 

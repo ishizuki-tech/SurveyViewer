@@ -36,11 +36,11 @@ test("skips malformed index rows while retaining valid rows", async () => {
   assert.equal(parsed.invalidRowCount, 1);
 });
 
-test("filters by UUID and device and sorts export dates", async () => {
+test("filters by selected survey and device and sorts export dates", async () => {
   const entries = parseShard(await fixture("index-shard.json"), "production").entries;
-  assert.deepEqual(filterAndSortSessions(entries, { uuid: "two", device: "", sort: "newest" }).map((entry) => entry.surveyId), ["fixture-uuid-two"]);
-  assert.deepEqual(filterAndSortSessions(entries, { uuid: "", device: "abcdef", sort: "newest" }).map((entry) => entry.surveyId), ["fixture-uuid-one"]);
-  assert.deepEqual(filterAndSortSessions(entries, { uuid: "", device: "", sort: "oldest" }).map((entry) => entry.surveyId), ["fixture-uuid-two", "fixture-uuid-one"]);
+  assert.deepEqual(filterAndSortSessions(entries, { surveyPath: entries[1]!.path, device: "all", sort: "newest" }).map((entry) => entry.surveyId), ["fixture-uuid-two"]);
+  assert.deepEqual(filterAndSortSessions(entries, { surveyPath: "all", device: "Fixture_ABCDEF123456", sort: "newest" }).map((entry) => entry.surveyId), ["fixture-uuid-one"]);
+  assert.deepEqual(filterAndSortSessions(entries, { surveyPath: "all", device: "all", sort: "oldest" }).map((entry) => entry.surveyId), ["fixture-uuid-two", "fixture-uuid-one"]);
 });
 
 test("loads a selected live export through a mocked fetch", async () => {
