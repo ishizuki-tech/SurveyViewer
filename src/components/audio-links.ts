@@ -1,7 +1,7 @@
 import type { SurveySource } from "../config/sources";
 import { githubRawUrl } from "../data/github-links";
 import type { AudioReference, VoiceFileRecord } from "../domain/normalized-session";
-import { unavailable } from "./state-panel";
+import { shortenIdentifier } from "./review-utils";
 
 export function audioLinks(
   source: SurveySource,
@@ -22,7 +22,6 @@ export function audioLinks(
     .filter((file): file is string => file !== undefined);
 
   if (files.length === 0 || exportPath === undefined) {
-    section.append(unavailable());
     return section;
   }
 
@@ -34,7 +33,9 @@ export function audioLinks(
     link.href = githubRawUrl(source, `${dateDirectory}/voice/${file}`);
     link.target = "_blank";
     link.rel = "noreferrer";
-    link.textContent = `Referenced audio: ${file}`;
+    link.textContent = `Referenced audio: ${shortenIdentifier(file, 18, 8)}`;
+    link.setAttribute("aria-label", `Referenced audio file: ${file}`);
+    link.title = file;
     item.append(link);
     list.append(item);
   }

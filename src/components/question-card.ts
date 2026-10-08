@@ -17,17 +17,16 @@ export function questionCard(
   card.append(heading);
   card.append(field("Question", answer?.question));
   card.append(field("Answer", answer?.answer));
-  card.append(field("AI outcome", session.aiOutcomes.get(questionId)));
+  const outcome = session.aiOutcomes.get(questionId);
+  if (outcome !== undefined) card.append(outcomeField(outcome));
 
   const followups = session.followups.get(questionId);
-  const followupSection = document.createElement("section");
-  followupSection.className = "followups";
-  const followupTitle = document.createElement("h4");
-  followupTitle.textContent = "Follow-ups";
-  followupSection.append(followupTitle);
-  if (followups === undefined || followups.length === 0) {
-    followupSection.append(unavailable());
-  } else {
+  if (followups !== undefined && followups.length > 0) {
+    const followupSection = document.createElement("section");
+    followupSection.className = "followups";
+    const followupTitle = document.createElement("h4");
+    followupTitle.textContent = "Follow-up trail";
+    followupSection.append(followupTitle);
     followups.forEach((followup, index) => {
       const item = document.createElement("div");
       item.className = "followup";
@@ -35,10 +34,23 @@ export function questionCard(
       item.append(field("Follow-up answer", followup.answer));
       followupSection.append(item);
     });
+    card.append(followupSection);
   }
-  card.append(followupSection);
-  card.append(audioLinks(source, exportPath, questionId, answer?.audio ?? [], session.voiceFiles));
+  const audio = audioLinks(source, exportPath, questionId, answer?.audio ?? [], session.voiceFiles);
+  if (audio.childElementCount > 1) card.append(audio);
   return card;
+}
+
+function outcomeField(outcome: string): HTMLElement {
+  const wrapper = document.createElement("div");
+  wrapper.className = "field field--outcome";
+  const heading = document.createElement("h4");
+  heading.textContent = "AI outcome";
+  const badge = document.createElement("span");
+  badge.className = "outcome-badge";
+  badge.textContent = outcome;
+  wrapper.append(heading, badge);
+  return wrapper;
 }
 
 function field(label: string, value: string | undefined): HTMLElement {
