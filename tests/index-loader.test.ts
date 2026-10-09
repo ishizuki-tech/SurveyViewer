@@ -38,9 +38,22 @@ test("skips malformed index rows while retaining valid rows", async () => {
 
 test("filters by selected survey and device and sorts export dates", async () => {
   const entries = parseShard(await fixture("index-shard.json"), "production").entries;
-  assert.deepEqual(filterAndSortSessions(entries, { surveyPath: entries[1]!.path, device: "all", sort: "newest" }).map((entry) => entry.surveyId), ["fixture-uuid-two"]);
-  assert.deepEqual(filterAndSortSessions(entries, { surveyPath: "all", device: "Fixture_ABCDEF123456", sort: "newest" }).map((entry) => entry.surveyId), ["fixture-uuid-one"]);
-  assert.deepEqual(filterAndSortSessions(entries, { surveyPath: "all", device: "all", sort: "oldest" }).map((entry) => entry.surveyId), ["fixture-uuid-two", "fixture-uuid-one"]);
+  assert.deepEqual(filterAndSortSessions(entries, { surveyPath: entries[1]!.path, date: "all", device: "all", sort: "newest" }).map((entry) => entry.surveyId), ["fixture-uuid-two"]);
+  assert.deepEqual(filterAndSortSessions(entries, { surveyPath: "all", date: "all", device: "Fixture_ABCDEF123456", sort: "newest" }).map((entry) => entry.surveyId), ["fixture-uuid-one"]);
+  assert.deepEqual(filterAndSortSessions(entries, { surveyPath: "all", date: "all", device: "all", sort: "oldest" }).map((entry) => entry.surveyId), ["fixture-uuid-two", "fixture-uuid-one"]);
+});
+
+test("filters before every count sort and uses newest as the count tie-breaker", async () => {
+  const entries = parseShard(await fixture("index-shard.json"), "production").entries;
+  const newest = { ...entries[0]!, path: "new", uploaderDate: "2026-10-07", exportedAt: "2026-10-07T13:00:00Z", answerCount: 2, followupCount: 1, audioReferenceCount: 1 };
+  const older = { ...entries[1]!, path: "old", uploaderDate: "2026-10-06", answerCount: 1, followupCount: 0, audioReferenceCount: 0 };
+  const equal = { ...newest, path: "equal", exportedAt: "2026-10-07T12:00:00Z" };
+  const all = [older, equal, newest];
+  for (const sort of ["answers-desc", "answers-asc", "followups-desc", "followups-asc", "audio-desc", "audio-asc"] as const) {
+    const result = filterAndSortSessions(all, { surveyPath: "all", date: "all", device: "all", sort });
+    assert.equal(result[0]!.path, sort.endsWith("desc") ? "new" : "old");
+  }
+  assert.deepEqual(filterAndSortSessions(all, { surveyPath: "all", date: "2026-10-07", device: "all", sort: "answers-desc" }).map((entry) => entry.path), ["new", "equal"]);
 });
 
 test("loads a selected live export through a mocked fetch", async () => {

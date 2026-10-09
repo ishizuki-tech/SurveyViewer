@@ -15,6 +15,7 @@ export function deviceOptions(entries: readonly ViewerIndexEntry[]): readonly Se
     ...(hasMissingDevice ? [{ value: "__missing__", label: "Missing device identity" }] : []),
   ];
 }
+export function dateOptions(entries: readonly ViewerIndexEntry[]): readonly SelectOption[] { return [{ value: "all", label: "All dates" }, ...[...new Set(entries.map((entry) => entry.uploaderDate))].sort().reverse().map((date) => ({ value: date, label: date }))]; }
 
 export function surveyOptions(entries: readonly ViewerIndexEntry[]): readonly SelectOption[] {
   return [

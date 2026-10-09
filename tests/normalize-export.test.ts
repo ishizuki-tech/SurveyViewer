@@ -54,3 +54,64 @@ test("resolves captured, known, natural, then unknown question IDs", () => {
   });
   assert.deepEqual(resolveQuestionOrder(session), ["CustomB", "Q10", "Q2", "Q99", "CustomA"]);
 });
+
+test("omits an empty structural Start marker", () => {
+  const session = normalizeExport({
+    survey_id: "structural-start-fixture",
+    answers: {
+      Start: { question: "Start", answer: "  " },
+      Q1: { question: "Fixture question", answer: "Fixture answer" }
+    },
+    followups: {},
+    voice_files: []
+  });
+
+  assert.deepEqual(resolveQuestionOrder(session), ["Q1"]);
+});
+
+test("retains Start when it has supporting content", () => {
+  const cases = [
+    {
+      name: "a meaningful answer",
+      export: { answers: { Start: { question: "Start", answer: "Fixture answer" } } }
+    },
+    {
+      name: "answer-attached audio",
+      export: { answers: { Start: { question: "Start", answer: "", audio: [{ file: "fixture.wav" }] } } }
+    },
+    {
+      name: "an AI outcome",
+      export: { answers: { Start: { question: "Start", answer: "" } }, ai_outcomes: { Start: "accepted" } }
+    },
+    {
+      name: "a follow-up",
+      export: { answers: { Start: { question: "Start", answer: "" } }, followups: { Start: [{ question: "Follow-up", answer: "Fixture" }] } }
+    },
+    {
+      name: "a voice-file reference",
+      export: { answers: { Start: { question: "Start", answer: "" } }, voice_files: [{ question_id: "Start", file: "fixture.wav" }] }
+    }
+  ];
+
+  for (const { name, export: additions } of cases) {
+    const session = normalizeExport({
+      survey_id: `start-${name}`,
+      followups: {},
+      voice_files: [],
+      ...additions
+    });
+    assert.ok(resolveQuestionOrder(session).includes("Start"), name);
+  }
+});
+
+test("keeps audio-only, follow-up-only, and AI-only question IDs visible", () => {
+  const session = normalizeExport({
+    survey_id: "auxiliary-question-fixture",
+    answers: { Q1: { question: "Fixture question", answer: "Fixture answer" } },
+    ai_outcomes: { AiOnly: "accepted" },
+    followups: { FollowupOnly: [{ question: "Follow-up", answer: "Fixture" }] },
+    voice_files: [{ question_id: "AudioOnly", file: "fixture.wav" }]
+  });
+
+  assert.deepEqual(resolveQuestionOrder(session), ["Q1", "AiOnly", "AudioOnly", "FollowupOnly"]);
+});

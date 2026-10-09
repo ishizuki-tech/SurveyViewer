@@ -117,13 +117,13 @@ function parseEntry(value: unknown, expectedSource: SourceId): ViewerIndexEntry 
   const rawJsonUrl = optionalString(value.raw_json_url);
   const uploaderDate = optionalString(value.uploader_date);
   const surveyId = optionalString(value.survey_id);
-  if (path === undefined || githubBlobUrl === undefined || rawJsonUrl === undefined || uploaderDate === undefined || surveyId === undefined || !/^\d{4}-\d{2}-\d{2}$/.test(uploaderDate) || !isNonNegativeInteger(value.question_count) || !isNonNegativeInteger(value.followup_count) || !isNonNegativeInteger(value.audio_reference_count)) return undefined;
+  if (path === undefined || githubBlobUrl === undefined || rawJsonUrl === undefined || uploaderDate === undefined || surveyId === undefined || !/^\d{4}-\d{2}-\d{2}$/.test(uploaderDate) || !isNonNegativeInteger(value.question_count) || !isNonNegativeInteger(value.answer_count) || !isNonNegativeInteger(value.followup_count) || !isNonNegativeInteger(value.audio_reference_count)) return undefined;
   const availability = value.availability;
   if (typeof availability.build !== "boolean" || typeof availability.ai_outcomes !== "boolean" || typeof availability.followups !== "boolean" || typeof availability.audio_references !== "boolean") return undefined;
   return {
     source: expectedSource, path, githubBlobUrl, rawJsonUrl,
     uploaderDate, surveyId, exportedAt: optionalString(value.exported_at), build: optionalString(value.build), deviceTag: optionalString(value.device_tag),
-    questionCount: value.question_count, followupCount: value.followup_count, audioReferenceCount: value.audio_reference_count,
+    questionCount: value.question_count, answerCount: value.answer_count, followupCount: value.followup_count, audioReferenceCount: value.audio_reference_count,
     availability: { build: availability.build, aiOutcomes: availability.ai_outcomes, followups: availability.followups, audioReferences: availability.audio_references },
   };
 }

@@ -25,7 +25,19 @@ export function surveyDetail(
   const detailHeader = document.createElement("div");
   detailHeader.className = "detail-header";
   detailHeader.append(metadata("Exported at", session.exportedAt));
-  detailHeader.append(metadata("Survey UUID", session.surveyId));
+  const surveyId = metadata("Survey UUID", session.surveyId);
+  surveyId.classList.add("metadata--uuid");
+
+  const copy = document.createElement("button");
+  copy.type = "button";
+  copy.className = "copy-uuid copy-uuid--detail";
+  copy.setAttribute("aria-label", "Copy full survey UUID");
+  copy.title = "Copy survey UUID";
+  copy.textContent = "Copy";
+  copy.addEventListener("click", () => { void copyUuid(copy, session.surveyId); });
+
+  surveyId.append(copy);
+  detailHeader.append(surveyId);
   const secondary = document.createElement("div");
   secondary.className = "detail-header__secondary";
   secondary.append(metadata("Source", source.label));
@@ -69,4 +81,14 @@ function metadata(label: string, value: string | undefined): HTMLElement {
   if (value === undefined) item.append(unavailable());
   else item.append(document.createTextNode(value));
   return item;
+}
+
+async function copyUuid(button: HTMLButtonElement, uuid: string): Promise<void> {
+  try {
+    await navigator.clipboard.writeText(uuid);
+    button.textContent = "Copied";
+  } catch {
+    button.textContent = "Copy unavailable";
+  }
+  window.setTimeout(() => { button.textContent = "Copy"; }, 1800);
 }

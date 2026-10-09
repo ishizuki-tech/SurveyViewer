@@ -10,6 +10,7 @@
     "device_tag": "Fixture_ABCDEF123456",
     "build": "fixture-build",
     "question_count": 2,
+    "answer_count": 2,
     "followup_count": 1,
     "audio_reference_count": 1,
     "availability": { "build": true, "ai_outcomes": true, "followups": true, "audio_references": true }
@@ -22,6 +23,7 @@
     "uploader_date": "2026-10-06",
     "survey_id": "fixture-uuid-two",
     "question_count": 1,
+    "answer_count": 1,
     "followup_count": 0,
     "audio_reference_count": 0,
     "availability": { "build": false, "ai_outcomes": false, "followups": false, "audio_references": false }

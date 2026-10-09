@@ -12,6 +12,13 @@ export function questionCard(
   const card = document.createElement("article");
   card.className = "question-card";
   const answer = session.answers.get(questionId);
+  if (questionId === "Introduction") {
+    card.classList.add("question-card--introduction");
+    card.append(introductionDisclosure(answer?.question));
+    const audio = audioLinks(source, exportPath, questionId, answer?.audio ?? [], session.voiceFiles);
+    if (audio.childElementCount > 1) card.append(audio);
+    return card;
+  }
   const heading = document.createElement("h3");
   heading.textContent = questionId;
   card.append(heading);
@@ -39,6 +46,20 @@ export function questionCard(
   const audio = audioLinks(source, exportPath, questionId, answer?.audio ?? [], session.voiceFiles);
   if (audio.childElementCount > 1) card.append(audio);
   return card;
+}
+
+function introductionDisclosure(text: string | undefined): HTMLDetailsElement {
+  const disclosure = document.createElement("details");
+  disclosure.className = "introduction-disclosure";
+  const summary = document.createElement("summary");
+  summary.textContent = "Introduction";
+  disclosure.append(summary);
+  if (text !== undefined && text !== "") {
+    const content = document.createElement("p");
+    content.textContent = text;
+    disclosure.append(content);
+  }
+  return disclosure;
 }
 
 function outcomeField(outcome: string): HTMLElement {

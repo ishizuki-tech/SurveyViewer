@@ -2,11 +2,12 @@ import "./style.css";
 import { filters } from "./components/filters";
 import { clearReviewFilters, DEFAULT_REVIEW_FILTERS, type ReviewFilters } from "./components/review-utils";
 import { statePanel } from "./components/state-panel";
+import { ACTIVE_SOURCE } from "./config/environment";
 import { SOURCES, type SourceId } from "./config/sources";
 import { IndexLoadError, loadExport, loadIndex } from "./data/index-loader";
 import { normalizeExport } from "./data/normalize-export";
 import { filterAndSortSessions } from "./data/session-query";
-import { deviceOptions, surveyOptions } from "./data/filter-options";
+import { dateOptions, deviceOptions, surveyOptions } from "./data/filter-options";
 import type { NormalizedSession } from "./domain/normalized-session";
 import type { ViewerIndexEntry, ViewerIndexManifest } from "./domain/viewer-index";
 import { rawInspector } from "./screens/raw-inspector";
@@ -14,7 +15,7 @@ import { sessionList } from "./screens/session-list";
 import { surveyDetail } from "./screens/survey-detail";
 
 const root = applicationRoot();
-let selectedSource: SourceId = "production";
+const selectedSource: SourceId = ACTIVE_SOURCE;
 let manifest: ViewerIndexManifest | undefined;
 let entries: readonly ViewerIndexEntry[] = [];
 let invalidRowCount = 0;
@@ -93,12 +94,7 @@ function render(): void {
   const layout = document.createElement("main");
   layout.className = "layout";
   const sidebar = document.createElement("aside");
-  const controls = filters(selectedSource, filtersState, deviceOptions(entries), surveyOptions(entriesForSurveyOptions()), (source) => {
-    selectedSource = source;
-    clearReviewFilters(filtersState);
-    narrowDetailMode = false;
-    void refreshIndex();
-  }, () => {
+  const controls = filters(filtersState, deviceOptions(filteredDateEntries()), dateOptions(entries), surveyOptions(entriesForSurveyOptions()), () => {
     clearReviewFilters(filtersState);
     selectedEntry = undefined;
     selectedSession = undefined;
@@ -113,6 +109,7 @@ function render(): void {
     clearSelectedSession();
     render();
   });
+  controls.date.addEventListener("change", () => { filtersState.date = controls.date.value; filtersState.device = "all"; filtersState.surveyPath = "all"; clearSelectedSession(); render(); });
   controls.survey.addEventListener("change", () => {
     filtersState.surveyPath = controls.survey.value;
     const entry = entries.find((candidate) => candidate.path === filtersState.surveyPath);
@@ -123,9 +120,16 @@ function render(): void {
       void selectSession(entry);
     }
   });
-  controls.sort.addEventListener("change", () => { filtersState.sort = controls.sort.value; render(); });
+  controls.sort.addEventListener("change", () => {
+    const value = controls.sort.value;
+    const allowed = ["newest", "oldest", "answers-desc", "answers-asc", "followups-desc", "followups-asc", "audio-desc", "audio-asc"];
+    if (!allowed.includes(value)) return;
+    filtersState.sort = value as ReviewFilters["sort"];
+    render();
+  });
   controls.month.addEventListener("change", () => {
     filtersState.month = controls.month.value;
+    filtersState.date = "all";
     filtersState.device = "all";
     filtersState.surveyPath = "all";
     clearSelectedSession();
@@ -190,12 +194,13 @@ function populateMonths(select: HTMLSelectElement): void {
 }
 
 function filteredEntries(): readonly ViewerIndexEntry[] {
-  return filterAndSortSessions(entries, { surveyPath: filtersState.surveyPath, device: filtersState.device, sort: filtersState.sort === "oldest" ? "oldest" : "newest" });
+  return filterAndSortSessions(entries, { surveyPath: filtersState.surveyPath, date: filtersState.date, device: filtersState.device, sort: filtersState.sort });
 }
 
 function entriesForSurveyOptions(): readonly ViewerIndexEntry[] {
-  return filterAndSortSessions(entries, { surveyPath: "all", device: filtersState.device, sort: filtersState.sort === "oldest" ? "oldest" : "newest" });
+  return filterAndSortSessions(filteredDateEntries(), { surveyPath: "all", date: "all", device: filtersState.device, sort: filtersState.sort });
 }
+function filteredDateEntries(): readonly ViewerIndexEntry[] { return filtersState.date === "all" ? entries : entries.filter((entry) => entry.uploaderDate === filtersState.date); }
 
 function clearSelectedSession(): void {
   selectedEntry = undefined;

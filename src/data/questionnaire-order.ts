@@ -14,9 +14,27 @@ export function resolveQuestionOrder(session: NormalizedSession): readonly strin
     ...session.followups.keys(),
     ...session.voiceFiles.map((voice) => voice.questionId).filter((id): id is string => id !== undefined),
   ]);
+  if (isEmptyStructuralStart(session)) {
+    ids.delete("Start");
+  }
   const capturedRank = new Map((session.capturedQuestionOrder ?? []).map((id, index) => [id, index]));
 
   return [...ids].sort((left, right) => compareQuestionIds(left, right, capturedRank));
+}
+
+function isEmptyStructuralStart(session: NormalizedSession): boolean {
+  const start = session.answers.get("Start");
+  if (
+    start?.question !== "Start" ||
+    (start.answer !== undefined && start.answer.trim() !== "") ||
+    start.audio.length > 0 ||
+    session.aiOutcomes.has("Start") ||
+    (session.followups.get("Start")?.length ?? 0) > 0
+  ) {
+    return false;
+  }
+
+  return !session.voiceFiles.some((voice) => voice.questionId === "Start");
 }
 
 function compareQuestionIds(left: string, right: string, capturedRank: ReadonlyMap<string, number>): number {

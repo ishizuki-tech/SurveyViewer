@@ -1,19 +1,23 @@
+import type { SessionFilters } from "../data/session-query";
+
 export interface ReviewFilters {
   surveyPath: string;
   device: string;
   month: string;
-  sort: string;
+  date: string;
+  sort: SessionFilters["sort"];
 }
 
 export const DEFAULT_REVIEW_FILTERS: ReviewFilters = {
   surveyPath: "all",
   device: "all",
   month: "all",
+  date: "all",
   sort: "newest",
 };
 
 export function hasActiveFilters(filters: ReviewFilters): boolean {
-  return filters.surveyPath !== "all" || filters.device !== "all" || filters.month !== "all" || filters.sort !== "newest";
+  return filters.surveyPath !== "all" || filters.device !== "all" || filters.month !== "all" || filters.date !== "all" || filters.sort !== "newest";
 }
 
 export function clearReviewFilters(filters: ReviewFilters): void {

@@ -34,36 +34,37 @@ export function sessionList(
     date.textContent = entry.exportedAt ?? entry.uploaderDate;
     const metadata = document.createElement("span");
     metadata.className = "session-row__metadata";
-    metadata.textContent = `${shortenIdentifier(entry.surveyId)} · ${entry.deviceTag ?? "Device unavailable"}${entry.build === undefined ? "" : ` · ${entry.build}`}`;
-    metadata.title = `${entry.surveyId}${entry.deviceTag === undefined ? "" : ` · ${entry.deviceTag}`}`;
+    const identifier = document.createElement("span");
+    identifier.className = "session-row__identifier";
+    identifier.textContent = shortenIdentifier(entry.surveyId);
+    identifier.title = entry.surveyId;
+
+    const device = document.createElement("span");
+    device.className = "session-row__device";
+    device.textContent = entry.deviceTag ?? "Device unavailable";
+    device.title = entry.deviceTag ?? "Device unavailable";
+
+    metadata.append(identifier, device);
+
+    if (entry.build !== undefined) {
+      const build = document.createElement("span");
+      build.className = "session-row__build";
+      build.textContent = entry.build;
+      build.title = `Build: ${entry.build}`;
+      metadata.append(build);
+    }
     const counts = document.createElement("span");
     counts.className = "session-row__counts";
-    for (const text of [`${entry.questionCount} questions`, `${entry.followupCount} follow-ups`, `${entry.audioReferenceCount} audio`]) {
+    for (const text of [`${entry.answerCount} answers`, `${entry.followupCount} follow-ups`, `${entry.audioReferenceCount} audio`]) {
       const badge = document.createElement("span");
       badge.className = "count-badge";
       badge.textContent = text;
       counts.append(badge);
     }
     button.append(date, metadata, counts);
-    const copy = document.createElement("button");
-    copy.type = "button";
-    copy.className = "copy-uuid";
-    copy.setAttribute("aria-label", `Copy full survey UUID ${entry.surveyId}`);
-    copy.textContent = "Copy UUID";
-    copy.addEventListener("click", () => { void copyUuid(copy, entry.surveyId); });
-    item.append(button, copy);
+    item.append(button);
     list.append(item);
   });
   section.append(list);
   return section;
-}
-
-async function copyUuid(button: HTMLButtonElement, uuid: string): Promise<void> {
-  try {
-    await navigator.clipboard.writeText(uuid);
-    button.textContent = "Copied";
-  } catch {
-    button.textContent = "Copy unavailable";
-  }
-  window.setTimeout(() => { button.textContent = "Copy UUID"; }, 1800);
 }

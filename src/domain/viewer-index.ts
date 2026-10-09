@@ -11,6 +11,7 @@ export interface ViewerIndexEntry {
   readonly build?: string;
   readonly deviceTag?: string;
   readonly questionCount: number;
+  readonly answerCount: number;
   readonly followupCount: number;
   readonly audioReferenceCount: number;
   readonly availability: {

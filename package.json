@@ -5,7 +5,10 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "tsc --noEmit && vite build",
+    "build": "npm run check && npm run build:production && npm run build:development",
+    "build:production": "vite build --mode production",
+    "build:development": "vite build --mode viewer-development",
+    "preview": "vite preview",
     "check": "tsc --noEmit",
     "test": "tsx --test tests/**/*.test.ts"
   },
